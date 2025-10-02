@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from "commander";
 import { SABService } from "./services/sab.service";
 import { ConfigHelper } from "./utils/config";
