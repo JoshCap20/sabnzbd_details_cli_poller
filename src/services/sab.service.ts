@@ -1,5 +1,4 @@
 import { QueueDetails } from '../models/queue-details.model';
-import { getConfig } from '../utils/config';
 import { APIService } from './api.service';
 import { UIService } from './ui.service';
 
@@ -7,13 +6,11 @@ import { Subject } from 'rxjs';
 import { Configuration } from '../models/config.model';
 
 export class SABService {
-    private config: Configuration;
     private apiService: APIService;
     private uiService: UIService;
     private stopPolling$: Subject<void>;
 
-    constructor() {
-        this.config = getConfig();
+    constructor(private config: Configuration) {
         this.apiService = new APIService(this.config);
         this.uiService = new UIService();
         this.stopPolling$ = new Subject<void>();
