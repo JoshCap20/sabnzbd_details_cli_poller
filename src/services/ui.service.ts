@@ -1,8 +1,8 @@
 import { QueueDetails } from '../models/queue-details.model';
 
 import * as cliProgress from 'cli-progress';
-import { ThemeHelper } from '../utils/theme';
 import { QueueItem } from '../models/queue-item.model';
+import { mapStringToTheme } from '../utils/theme';
 
 export class UIService {
     private multibar: cliProgress.MultiBar;
@@ -10,7 +10,7 @@ export class UIService {
     private itemBars: Map<string, cliProgress.SingleBar>;
 
     // TODO: Make configurable as part of ui config
-    private static maxLength: number = 50;
+    private static maxLength = 50;
 
     constructor(theme: string) {
         this.multibar = UIService.getMultibar(5, theme);
@@ -116,7 +116,7 @@ export class UIService {
                     return v.toString();
                 }
             }
-        }, ThemeHelper.mapStringToTheme(theme));
+        }, mapStringToTheme(theme));
     }
 
     private static truncateName(name: string): string {

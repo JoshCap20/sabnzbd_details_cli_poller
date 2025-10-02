@@ -1,27 +1,27 @@
-export class Constants {
-    static readonly ENV_SAB_HOST: string = 'SAB_HOST';
-    static readonly ENV_SAB_PORT: string = 'SAB_PORT';
-    static readonly ENV_SAB_API_KEY: string = 'SAB_API_KEY';
-    static readonly ENV_SAB_ITEM_LIMIT: string = 'SAB_ITEM_LIMIT';
-    static readonly ENV_SAB_POLL_INTERVAL: string = 'SAB_POLL_INTERVAL';
-    static readonly ENV_SAB_RETRY_ATTEMPTS: string = 'SAB_RETRY_ATTEMPTS';
-    static readonly ENV_SAB_RETRY_DELAY: string = 'SAB_RETRY_DELAY';
-    static readonly ENV_UI_THEME: string = 'UI_THEME';
+export const Constants = {
+    ENV_SAB_HOST: 'SAB_HOST',
+    ENV_SAB_PORT: 'SAB_PORT',
+    ENV_SAB_API_KEY: 'SAB_API_KEY',
+    ENV_SAB_ITEM_LIMIT: 'SAB_ITEM_LIMIT',
+    ENV_SAB_POLL_INTERVAL: 'SAB_POLL_INTERVAL',
+    ENV_SAB_RETRY_ATTEMPTS: 'SAB_RETRY_ATTEMPTS',
+    ENV_SAB_RETRY_DELAY: 'SAB_RETRY_DELAY',
+    ENV_UI_THEME: 'UI_THEME',
 
-    static readonly DEFAULT_PORT: number = 8080;
-    static readonly DEFAULT_SSL: boolean = false;
-    static readonly DEFAULT_QUEUE_LIMIT: number = 15;
-    static readonly DEFAULT_POLL_INTERVAL: number = 2000;
-    static readonly DEFAULT_RETRY_ATTEMPTS: number = 3;
-    static readonly DEFAULT_RETRY_DELAY: number = 2000;
+    DEFAULT_PORT: 8080,
+    DEFAULT_SSL: false,
+    DEFAULT_QUEUE_LIMIT: 15,
+    DEFAULT_POLL_INTERVAL: 2000,
+    DEFAULT_RETRY_ATTEMPTS: 3,
+    DEFAULT_RETRY_DELAY: 2000,
 
-    static readonly DESC_HOST: string = 'Set host address (e.g. 192.168.1.71)';
-    static readonly DESC_PORT: string = 'Set port number (e.g. 8080)';
-    static readonly DESC_SSL: string = 'Uses HTTPS protocol for connection';
-    static readonly DESC_API_KEY: string = 'Set API key (retrieved from sabnzbd';
-    static readonly DESC_QUEUE_LIMIT: string = 'Set queue item limit';
-    static readonly DESC_POLL_INTERVAL: string = 'Set the polling interval in milliseconds';
-    static readonly DESC_RETRY_ATTEMPTS: string = 'Set retry attempts for API calls';
-    static readonly DESC_RETRY_DELAY: string = 'Set delay on retry for API calls';
-    static readonly DESC_THEME: string = 'Set UI theme';
-}
+    DESC_HOST: 'Set host address (e.g. 192.168.1.71)',
+    DESC_PORT: 'Set port number (e.g. 8080)',
+    DESC_SSL: 'Uses HTTPS protocol for connection',
+    DESC_API_KEY: 'Set API key (retrieved from sabnzbd',
+    DESC_QUEUE_LIMIT: 'Set queue item limit',
+    DESC_POLL_INTERVAL: 'Set the polling interval in milliseconds',
+    DESC_RETRY_ATTEMPTS: 'Set retry attempts for API calls',
+    DESC_RETRY_DELAY: 'Set delay on retry for API calls',
+    DESC_THEME: 'Set UI theme',
+} as const;

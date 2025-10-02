@@ -1,15 +1,15 @@
 import { Configuration } from "../models/config.model";
 
 export class BaseService {
-    static queue_details_query_param: string = 'mode=queue';
-    static http_protocol: string = 'http';
-    static https_protocol: string = 'https';
+    static queue_details_query_param = 'mode=queue';
+    static http_protocol = 'http';
+    static https_protocol = 'https';
 
     constructor(protected configuration: Configuration) { }
 
     protected getDetailsUrl(): string {
         const jobsLimit: number | undefined = this.getQueueItemLimit();
-        let url: string = `${this.getBaseUrl()}&${BaseService.queue_details_query_param}`;
+        let url = `${this.getBaseUrl()}&${BaseService.queue_details_query_param}`;
         if (jobsLimit) {
             url += `&limit=${jobsLimit}`;
         }
