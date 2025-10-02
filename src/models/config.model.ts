@@ -17,7 +17,9 @@ export interface MonitoringConfiguration {
 }
 
 export interface Configuration {
-    api_configuration: APIConfiguration
-    monitoring_configuration: MonitoringConfiguration
+    api_configuration: APIConfiguration,
+    monitoring_configuration: MonitoringConfiguration,
     ui_configuration: UIConfiguration
+    // lazy
+    queue_item_limit?: number
 }
