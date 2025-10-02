@@ -1,98 +1,38 @@
-import { getSABService } from "./services/sab.factory.service";
 import { QueueDetails } from './models/queue-details.model';
+import { getConfig } from './utils/config';
+import { SABService } from './services/sab.service';
 
-import { catchError, from, interval, map, of, Subject, switchMap, takeUntil } from 'rxjs';
-import axios from 'axios';
-import * as cliProgress from 'cli-progress';  // Updated import (namespace)
+import { Subject } from 'rxjs';
+import * as cliProgress from 'cli-progress';
 
-const service = getSABService();
+const config = getConfig();
+const service = new SABService(config);
+const stopPolling$ = new Subject<void>();
 
-const pollIntervalMs = 5000;  // Poll every 5 seconds
-const stopPolling$ = new Subject<void>();  // To manually stop polling
-
-// Create MultiBar instance with custom options
 const multibar = new cliProgress.MultiBar({
-    fps: 5,  // Lower for less CPU usage
-    clearOnComplete: true,  // Clear bars when done
-    hideCursor: true,  // Hide cursor for clean UI
+    fps: config.ui_configuration.ui_refresh_rate,
+    clearOnComplete: true,
+    hideCursor: true,
     format: ' {bar} | {percentage}% | {title} | ETA: {eta_formatted} | {value}/{total} MB',  // Default format (overridable per bar)
-}, cliProgress.Presets.shades_classic);  // Use a preset for styling
+    formatValue: (v, options, type) => {
+        if (type === 'value' || type === 'total') {
+            return v.toFixed(2);
+        } else if (type === 'percentage') {
+            return Math.floor(v).toString();
+        } else {
+            return v.toString();
+        }
+    }
+}, cliProgress.Presets.shades_grey);
 
-let overallBar: cliProgress.SingleBar | null = null;  // Overall queue bar
-const itemBars = new Map<string, cliProgress.SingleBar>();  // Map of nzo_id to item bars
+let overallBar: cliProgress.SingleBar | null = null;
+const itemBars = new Map<string, cliProgress.SingleBar>();
 
-const pollingObservable = interval(pollIntervalMs).pipe(
-    switchMap(() => from(axios.get<{ queue: QueueDetails }>(service.getDetailsUrl(5))).pipe(
-        map(response => response.data)
-    )),
-    catchError(error => {
-        multibar.log(`Polling error: ${error.message}\n`);  // Log errors above bars
-        return of(null);
-    }),
-    takeUntil(stopPolling$)
-);
-
-// Subscribe and update CLI in place
-pollingObservable.subscribe({
+service.pollDetails(stopPolling$).subscribe({
     next: (apiResponse: { queue: QueueDetails } | null) => {
         const data = apiResponse?.queue ?? null;
         if (data) {
-            // Log the full data for debugging (use JSON.stringify to show all properties deeply)
-            // console.log('Polled data:', JSON.stringify(data, null, 2));
-
-            // Update overall bar
-            const totalMb = parseFloat(data.mb);
-            const downloadedMb = totalMb - parseFloat(data.mbleft);
-            if (!overallBar) {
-                overallBar = multibar.create(totalMb, downloadedMb, {
-                    title: 'Overall Queue',
-                    speed: data.speed,
-                    timeleft: data.timeleft
-                }, {
-                    format: ' {bar} | {percentage}% | {title} | Speed: {speed} | ETA: {timeleft} | {value}/{total} MB'
-                });
-            } else {
-                overallBar.update(downloadedMb, {
-                    title: 'Overall Queue',
-                    speed: data.speed,
-                    timeleft: data.timeleft
-                });
-            }
-
-            // Track current item IDs
-            const currentIds = new Set(data.slots.map(item => item.nzo_id));
-
-            // Remove bars for completed/removed items
-            for (const id of [...itemBars.keys()]) {
-                if (!currentIds.has(id)) {
-                    const bar = itemBars.get(id);
-                    if (bar) multibar.remove(bar);
-                    itemBars.delete(id);
-                }
-            }
-
-            // Add/update bars for each queue item
-            for (const item of data.slots) {
-                const totalMb = parseFloat(item.mb);
-                const downloadedMb = totalMb - parseFloat(item.mbleft);
-                let bar = itemBars.get(item.nzo_id);
-                if (!bar) {
-                    bar = multibar.create(totalMb, downloadedMb, {
-                        title: item.filename,
-                        status: item.status,
-                        timeleft: item.timeleft
-                    }, {
-                        format: ' {bar} | {percentage}% | {title} | {status} | ETA: {timeleft} | {value}/{total} MB'
-                    });
-                    itemBars.set(item.nzo_id, bar);
-                } else {
-                    bar.update(downloadedMb, {
-                        title: item.filename,
-                        status: item.status,
-                        timeleft: item.timeleft
-                    });
-                }
-            }
+            updateUI(data);
         } else {
             multibar.log('No data received from poll\n');
         }
@@ -103,14 +43,79 @@ pollingObservable.subscribe({
     },
     complete: () => {
         console.log('Polling stopped');
-        multibar.stop();  // Clean up bars
+        multibar.stop();
     }
 });
 
-// Handle Ctrl+C to stop polling and clean up
 process.on('SIGINT', () => {
     stopPolling$.next();
     stopPolling$.complete();
     multibar.stop();
     process.exit(0);
 });
+
+function updateUI(data: QueueDetails) {
+    // Update overall bar
+    let totalMb = parseFloat(data.mb);
+    let downloadedMb = totalMb - parseFloat(data.mbleft);
+    const overallUnit = totalMb >= 1024 ? 'GB' : 'MB';
+    const overallScale = overallUnit === 'GB' ? 1024 : 1;
+    totalMb /= overallScale;
+    downloadedMb /= overallScale;
+
+    if (!overallBar) {
+        overallBar = multibar.create(totalMb, downloadedMb, {
+            title: 'Overall Queue',
+            speed: data.speed,
+            timeleft: data.timeleft
+        }, {
+            format: ' {bar} | {percentage}% | {title} | Speed: {speed} | ETA: {timeleft} | {value}/{total} ' + overallUnit
+        });
+    } else {
+        overallBar.update(downloadedMb, {
+            title: 'Overall Queue',
+            speed: data.speed,
+            timeleft: data.timeleft
+        });
+    }
+
+    // Track current item IDs
+    const currentIds = new Set(data.slots.map(item => item.nzo_id));
+
+    // Remove bars for completed/removed items
+    for (const id of [...itemBars.keys()]) {
+        if (!currentIds.has(id)) {
+            const bar = itemBars.get(id);
+            if (bar) multibar.remove(bar);
+            itemBars.delete(id);
+        }
+    }
+
+    // Add/update bars for each queue item
+    for (const item of data.slots) {
+        let itemTotalMb = parseFloat(item.mb);
+        let itemDownloadedMb = itemTotalMb - parseFloat(item.mbleft);
+        const itemUnit = itemTotalMb >= 1024 ? 'GB' : 'MB';
+        const itemScale = itemUnit === 'GB' ? 1024 : 1;
+        itemTotalMb /= itemScale;
+        itemDownloadedMb /= itemScale;
+
+        let bar = itemBars.get(item.nzo_id);
+        if (!bar) {
+            bar = multibar.create(itemTotalMb, itemDownloadedMb, {
+                title: item.filename,
+                status: item.status,
+                timeleft: item.timeleft
+            }, {
+                format: ' {bar} | {percentage}% | {title} | {status} | ETA: {timeleft} | {value}/{total} ' + itemUnit
+            });
+            itemBars.set(item.nzo_id, bar);
+        } else {
+            bar.update(itemDownloadedMb, {
+                title: item.filename,
+                status: item.status,
+                timeleft: item.timeleft
+            });
+        }
+    }
+}
