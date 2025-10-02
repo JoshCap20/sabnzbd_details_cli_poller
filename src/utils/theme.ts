@@ -14,4 +14,8 @@ export class ThemeHelper {
     public static mapStringToTheme(theme: string): cliProgress.Preset {
         return ThemeHelper.stringToThemeMap[theme] ?? ThemeHelper.stringToThemeMap[ThemeHelper.defaultThemeString]!;
     }
+
+    public static getAvailableThemeStrings(): string[] {
+        return Object.keys(ThemeHelper.stringToThemeMap);
+    }
 }
