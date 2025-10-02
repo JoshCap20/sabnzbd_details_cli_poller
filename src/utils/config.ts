@@ -1,15 +1,10 @@
 import 'dotenv/config';
 
 import { Configuration } from '../models/config.model';
-import { ThemeHelper } from './theme';
 
 export class ConfigHelper {
-    public static getConfig(options?: any): Configuration {
-        const config = this.parseConfig();
-        if (options) {
-            this.overrideConfig(options, config);
-            console.log(config);
-        }
+    public static getConfig(options: any): Configuration {
+        const config = this.parseConfig(options);
         this.validateConfig(config);
         if (config.api_configuration.is_ssl) {
             console.warn('SSL Enabled: Connecting via SSL (make sure this is configured properly)')
@@ -18,26 +13,6 @@ export class ConfigHelper {
             console.warn('20 is the max recommended queue item limit')
         }
         return config;
-    }
-
-    public static overrideConfig(options: any, config: Configuration) {
-        if (options.limit) {
-            config.monitoring_configuration.queue_item_limit = this.parseStringAsInteger("limit", options.limit);
-        }
-        if (options.interval) {
-            config.monitoring_configuration.poll_interval = this.parseStringAsInteger("interval", options.interval);
-        }
-        if (options.theme) {
-            config.ui_configuration.ui_theme = options.theme;
-        }
-    }
-
-    private static parseStringAsInteger(optionName: string, str: string): number {
-        const valueAsInt = parseInt(str);
-        if (Number.isSafeInteger(valueAsInt)) {
-            return valueAsInt;
-        }
-        throw new Error(`${optionName} should be a valid integer`);
     }
 
     private static validateConfig(config: Configuration) {
@@ -50,22 +25,23 @@ export class ConfigHelper {
         if (!config.monitoring_configuration.retry_delay) throw new Error("SAB_RETRY_DELAY is required and must be a number");
     }
 
-    private static parseConfig(): Configuration {
+    private static parseConfig(options: any): Configuration {
         return {
             api_configuration: {
-                host: process.env.SAB_HOST || '',
-                port: parseInt(process.env.SAB_PORT || ''),
-                api_key: process.env.SAB_API_KEY || '',
-                is_ssl: (process.env.SAB_SSL == 'true' ? true : false) || false,
+                host: options.host,
+                port: options.port,
+                api_key: options.apiKey,
+                is_ssl: options.ssl,
             },
+            // TODO: Push parsing to options
             monitoring_configuration: {
-                poll_interval: parseInt(process.env.SAB_POLL_INTERVAL || ''),
-                retry_attempts: parseInt(process.env.SAB_RETRY_ATTEMPTS || ''),
-                retry_delay: parseInt(process.env.SAB_RETRY_DELAY || ''),
-                queue_item_limit: parseInt(process.env.SAB_ITEM_LIMIT || '20')
+                poll_interval: parseInt(options.interval),
+                retry_attempts: parseInt(options.retries),
+                retry_delay: parseInt(options.retryDelay),
+                queue_item_limit: parseInt(options.limit)
             },
             ui_configuration: {
-                ui_theme: process.env.UI_THEME ?? ThemeHelper.defaultThemeString,
+                ui_theme: options.theme
             },
         }
     }
