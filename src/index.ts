@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import { SABService } from "./services/sab.service";
 import { ConfigHelper } from "./utils/config";
+import { ThemeHelper } from "./utils/theme";
 
 const program = new Command();
 
@@ -12,8 +13,14 @@ program
 
 program.command('poll')
     .description('Polls the downloading queue for status updates')
-    .option('-l, --limit <type>', 'Set queue item limit')
-    .option('-i, --interval <type>', 'Set the polling interval in miliseconds')
+    .addOption(new Option('-l, --limit <type>', 'Set queue item limit'))
+    .addOption(new Option('-i, --interval <type>', 'Set the polling interval in milliseconds'))
+    .addOption(
+        new Option('-t, --theme <theme>')
+            .choices(Object.keys(ThemeHelper.stringToThemeMap))
+            .default(ThemeHelper.defaultThemeString)
+            .env('UI_THEME')
+    )
     .action((options) => {
         const service = new SABService(ConfigHelper.getConfig(options));
         process.on('SIGINT', () => {

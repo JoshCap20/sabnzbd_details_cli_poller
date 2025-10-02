@@ -1,14 +1,15 @@
 import { QueueDetails } from '../models/queue-details.model';
 
 import * as cliProgress from 'cli-progress';
+import { ThemeHelper } from '../utils/theme';
 
 export class UIService {
     private multibar: cliProgress.MultiBar;
     private overallBar: cliProgress.SingleBar | null;
     private itemBars: Map<string, cliProgress.SingleBar>;
 
-    constructor() {
-        this.multibar = UIService.getMultibar(5);
+    constructor(theme: string) {
+        this.multibar = UIService.getMultibar(5, theme);
         this.overallBar = null;
         this.itemBars = new Map<string, cliProgress.SingleBar>;
     }
@@ -87,7 +88,7 @@ export class UIService {
         }
     }
 
-    private static getMultibar(poll_interval: number) {
+    private static getMultibar(poll_interval: number, theme: string) {
         return new cliProgress.MultiBar({
             fps: poll_interval,
             clearOnComplete: true,
@@ -102,6 +103,6 @@ export class UIService {
                     return v.toString();
                 }
             }
-        }, cliProgress.Presets.shades_grey);
+        }, ThemeHelper.mapStringToTheme(theme));
     }
 }

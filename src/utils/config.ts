@@ -1,5 +1,7 @@
 import 'dotenv/config';
+
 import { Configuration } from '../models/config.model';
+import { ThemeHelper } from './theme';
 
 export class ConfigHelper {
     public static getConfig(options?: any): Configuration {
@@ -25,6 +27,9 @@ export class ConfigHelper {
         if (options.interval) {
             config.monitoring_configuration.poll_interval = this.parseStringAsInteger("interval", options.interval);
         }
+        if (options.theme) {
+            config.ui_configuration.ui_theme = options.theme;
+        }
     }
 
     private static parseStringAsInteger(optionName: string, str: string): number {
@@ -43,8 +48,6 @@ export class ConfigHelper {
         if (!config.monitoring_configuration.poll_interval) throw new Error("SAB_POLL_INTERVAL is required and must be a number");
         if (!config.monitoring_configuration.retry_attempts) throw new Error("SAB_RETRY_ATTEMPTS is required and must be a number");
         if (!config.monitoring_configuration.retry_delay) throw new Error("SAB_RETRY_DELAY is required and must be a number");
-
-        if (!config.ui_configuration.ui_theme) throw new Error("UI_THEME is required");
     }
 
     private static parseConfig(): Configuration {
@@ -62,7 +65,7 @@ export class ConfigHelper {
                 queue_item_limit: parseInt(process.env.SAB_ITEM_LIMIT || '20')
             },
             ui_configuration: {
-                ui_theme: process.env.UI_THEME || '',
+                ui_theme: process.env.UI_THEME ?? ThemeHelper.defaultThemeString,
             },
         }
     }
