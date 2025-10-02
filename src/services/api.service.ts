@@ -4,7 +4,7 @@ import { BaseService } from "./base.service";
 import { catchError, from, interval, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import axios from 'axios';
 
-export class SABService extends BaseService {
+export class APIService extends BaseService {
     public pollDetails(stopPolling$: Subject<void>): Observable<{ queue: QueueDetails; } | null> {
         return interval(this.getPollInterval()).pipe(
             switchMap(() => from(axios.get<{ queue: QueueDetails }>(this.getDetailsUrl())).pipe(

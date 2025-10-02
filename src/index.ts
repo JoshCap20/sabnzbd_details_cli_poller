@@ -1,6 +1,6 @@
 import { QueueDetails } from './models/queue-details.model';
 import { getConfig } from './utils/config';
-import { SABService } from './services/sab.service';
+import { APIService } from './services/api.service';
 import { UIService } from './services/ui.service';
 
 import { Subject } from 'rxjs';
