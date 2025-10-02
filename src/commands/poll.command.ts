@@ -2,28 +2,15 @@ import { Command, Option } from "commander";
 import { SABService } from "../services/sab.service";
 import { ConfigHelper } from "../utils/config";
 import { ThemeHelper } from "../utils/theme";
+import { CommandOptions } from "../utils/command-options";
 
 export function createPollCommand(): Command {
-    return new Command('poll')
-        .description('Polls the downloading queue for status updates')
-        .addOption(
-            new Option('-h, --host <host>', 'Set host address (e.g. 192.168.1.71)')
-                .env('SAB_HOST')
-        )
-        .addOption(
-            new Option('-p, --port <port>', 'Set port number (e.g. 8080)')
-                .default('8080')
-                .env('SAB_PORT')
-                .argParser(ConfigHelper.customIntParser)
-        )
-        .addOption(
-            new Option('--ssl', 'Uses HTTPS protocol for connection')
-                .default(false)
-        )
-        .addOption(
-            new Option('--api-key <key>', 'Set API key (retrieved from sabnzbd')
-                .env('SAB_API_KEY')
-        )
+    const cmd = new Command('poll')
+        .description('Polls the downloading queue for status updates');
+
+    CommandOptions.createHostOptions().forEach(opt => cmd.addOption(opt));
+
+    return cmd
         .addOption(
             new Option('-l, --limit <type>', 'Set queue item limit')
                 .default('15', 'Shows top 15 queue items')
