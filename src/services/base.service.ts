@@ -1,23 +1,32 @@
-import { Configuration, MonitoringConfiguration } from "../models/config.model";
-import { QUEUE_DETAILS_ENDPOINT } from "../utils/api-constants";
+import { Configuration } from "../models/config.model";
 
 export class BaseService {
+    static queue_details_query_param: string = 'mode=queue';
+    static http_protocol: string = 'http';
+    static https_protocol: string = 'https';
 
     constructor(protected configuration: Configuration) { }
 
-    protected getDetailsUrl(jobsLimit?: number | undefined): string {
-        return jobsLimit ?
-            this.getBaseUrl() + this.getAPIKeyParam() + QUEUE_DETAILS_ENDPOINT + "&limit=" + jobsLimit
-            : this.getBaseUrl() + this.getAPIKeyParam() + QUEUE_DETAILS_ENDPOINT;
+    protected getDetailsUrl(): string {
+        const jobsLimit: number | undefined = this.getQueueItemLimit();
+        let url: string = `${this.getBaseUrl()}&${BaseService.queue_details_query_param}`;
+        if (jobsLimit) {
+            url += `&limit=${jobsLimit}`;
+        }
+        return url;
     }
 
     protected getBaseUrl(): string {
-        const protocol = this.configuration.api_configuration.is_ssl ? 'https' : 'http';
-        return `${protocol}://${this.configuration.api_configuration.host}:${this.configuration.api_configuration.port}/api?output=json`;
+        return `${this.getProtocol()}://${this.configuration.api_configuration.host}:${this.configuration.api_configuration.port}/api?output=json&${this.getAPIKeyParam()}`;
+    }
+
+    protected getProtocol(): string {
+        return this.configuration.api_configuration.is_ssl
+            ? BaseService.https_protocol : BaseService.http_protocol;
     }
 
     protected getAPIKeyParam(): string {
-        return `&apikey=${this.configuration.api_configuration.api_key}`;
+        return `apikey=${this.configuration.api_configuration.api_key}`;
     }
 
     protected getPollInterval(): number {

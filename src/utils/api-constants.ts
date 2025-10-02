@@ -1,1 +1,0 @@
-export const QUEUE_DETAILS_ENDPOINT = "&mode=queue";
