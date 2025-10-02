@@ -6,7 +6,6 @@ export interface APIConfiguration {
 }
 
 export interface UIConfiguration {
-    ui_refresh_rate: number
     ui_theme: string
 }
 

@@ -19,7 +19,6 @@ function validateConfig(config: Configuration) {
     if (!config.monitoring_configuration.retry_attempts) throw new Error("SAB_RETRY_ATTEMPTS is required and must be a number");
     if (!config.monitoring_configuration.retry_delay) throw new Error("SAB_RETRY_DELAY is required and must be a number");
 
-    if (!config.ui_configuration.ui_refresh_rate) throw new Error("UI_REFRESH_RATE is required and must be a number");
     if (!config.ui_configuration.ui_theme) throw new Error("UI_THEME is required");
 }
 
@@ -38,7 +37,6 @@ function parseConfig(): Configuration {
             queue_item_limit: parseInt(process.env.SAB_ITEM_LIMIT || '20')
         },
         ui_configuration: {
-            ui_refresh_rate: parseInt(process.env.UI_REFRESH_RATE || ''),
             ui_theme: process.env.UI_THEME || '',
         },
     }

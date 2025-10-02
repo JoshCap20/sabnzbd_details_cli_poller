@@ -10,7 +10,7 @@ const service = new SABService(config);
 const stopPolling$ = new Subject<void>();
 
 const multibar = new cliProgress.MultiBar({
-    fps: config.ui_configuration.ui_refresh_rate,
+    fps: config.monitoring_configuration.poll_interval,
     clearOnComplete: true,
     hideCursor: true,
     format: ' {bar} | {percentage}% | {title} | ETA: {eta_formatted} | {value}/{total} MB',  // Default format (overridable per bar)
