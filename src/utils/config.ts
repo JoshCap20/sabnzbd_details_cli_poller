@@ -2,16 +2,32 @@ import 'dotenv/config';
 import { Configuration } from '../models/config.model';
 
 export class ConfigHelper {
-    public static getConfig(): Configuration {
+    public static getConfig(options?: any): Configuration {
         const config = this.parseConfig();
+        if (options) {
+            this.overrideConfig(options, config);
+            console.log(config);
+        }
         this.validateConfig(config);
         if (config.api_configuration.is_ssl) {
             console.warn('SSL Enabled: Connecting via SSL (make sure this is configured properly)')
         }
+        if (config.monitoring_configuration.queue_item_limit > 20) {
+            console.warn('20 is the max recommended queue item limit')
+        }
         return config;
     }
 
-    public static parseStringAsInteger(optionName: string, str: string): number {
+    public static overrideConfig(options: any, config: Configuration) {
+        if (options.limit) {
+            config.monitoring_configuration.queue_item_limit = this.parseStringAsInteger("limit", options.limit);
+        }
+        if (options.interval) {
+            config.monitoring_configuration.poll_interval = this.parseStringAsInteger("interval", options.interval);
+        }
+    }
+
+    private static parseStringAsInteger(optionName: string, str: string): number {
         const valueAsInt = parseInt(str);
         if (Number.isSafeInteger(valueAsInt)) {
             return valueAsInt;

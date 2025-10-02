@@ -5,28 +5,20 @@ import { ConfigHelper } from "./utils/config";
 const program = new Command();
 
 program
-    .name('SABnzbd CLI Util')
-    .description('Simple API wrapper for the CLI')
+    .name('SABnzbd CLI Wrapper')
+    .description('Simple SABnzbd API wrapper for the CLI')
     .version('0.1.0')
+
+program.command('poll')
+    .description('Polls the downloading queue for status updates')
     .option('-l, --limit <type>', 'Set queue item limit')
     .option('-i, --interval <type>', 'Set the polling interval in miliseconds')
-    .parse();
+    .action((options) => {
+        const service = new SABService(ConfigHelper.getConfig(options));
+        process.on('SIGINT', () => {
+            service.interrupt();
+        });
+        service.poll();
+    })
 
-const options = program.opts();
-const config = ConfigHelper.getConfig();
-
-// Override environment vars with cli if set
-if (options.limit) {
-    config.monitoring_configuration.queue_item_limit = ConfigHelper.parseStringAsInteger("limit", options.limit);
-}
-if (options.interval) {
-    config.monitoring_configuration.poll_interval = ConfigHelper.parseStringAsInteger("interval", options.interval);
-}
-
-const service = new SABService(config);
-
-process.on('SIGINT', () => {
-    service.interrupt();
-});
-
-service.poll();
+program.parse();
