@@ -2,11 +2,15 @@ import { QueueDetails } from '../models/queue-details.model';
 
 import * as cliProgress from 'cli-progress';
 import { ThemeHelper } from '../utils/theme';
+import { QueueItem } from '../models/queue-item.model';
 
 export class UIService {
     private multibar: cliProgress.MultiBar;
     private overallBar: cliProgress.SingleBar | null;
     private itemBars: Map<string, cliProgress.SingleBar>;
+
+    // TODO: Make configurable as part of ui config
+    private static maxLength: number = 50;
 
     constructor(theme: string) {
         this.multibar = UIService.getMultibar(5, theme);
@@ -23,7 +27,14 @@ export class UIService {
     }
 
     public updateUI(data: QueueDetails) {
-        // Update overall bar
+        this.updateOverallBar(data);
+        this.removeUntrackedBars(data);
+        for (const item of data.slots) {
+            this.updateItemBar(item);
+        }
+    }
+
+    private updateOverallBar(data: QueueDetails) {
         let totalMb = parseFloat(data.mb);
         let downloadedMb = totalMb - parseFloat(data.mbleft);
         const overallUnit = totalMb >= 1024 ? 'GB' : 'MB';
@@ -35,55 +46,57 @@ export class UIService {
             this.overallBar = this.multibar.create(totalMb, downloadedMb, {
                 title: 'Overall Queue',
                 speed: data.speed,
-                timeleft: data.timeleft
+                timeleft: data.timeleft,
+                queuedItems: data.noofslots_total
             }, {
-                format: ' {bar} | {percentage}% | {title} | Speed: {speed} | ETA: {timeleft} | {value}/{total} ' + overallUnit
+                format: ' {bar} | {percentage}% | {title} | Speed: {speed} | ETA: {timeleft} | Queued Items: {queuedItems} | {value}/{total} ' + overallUnit
             });
         } else {
             this.overallBar.update(downloadedMb, {
                 title: 'Overall Queue',
                 speed: data.speed,
-                timeleft: data.timeleft
+                timeleft: data.timeleft,
+                queuedItems: data.noofslots_total
             });
         }
+    }
 
-        // Track current item IDs
+    private updateItemBar(item: QueueItem) {
+        let itemTotalMb = parseFloat(item.mb);
+        let itemDownloadedMb = itemTotalMb - parseFloat(item.mbleft);
+        const truncatedName = UIService.truncateName(item.filename);
+        const itemUnit = itemTotalMb >= 1024 ? 'GB' : 'MB';
+        const itemScale = itemUnit === 'GB' ? 1024 : 1;
+        itemTotalMb /= itemScale;
+        itemDownloadedMb /= itemScale;
+
+        let bar = this.itemBars.get(item.nzo_id);
+        if (!bar) {
+            bar = this.multibar.create(itemTotalMb, itemDownloadedMb, {
+                title: truncatedName,
+                status: item.status,
+                timeleft: item.timeleft
+            }, {
+                format: ' {bar} | {percentage}% | {title} | {status} | ETA: {timeleft} | {value}/{total} ' + itemUnit
+            });
+            this.itemBars.set(item.nzo_id, bar);
+        } else {
+            bar.update(itemDownloadedMb, {
+                title: truncatedName,
+                status: item.status,
+                timeleft: item.timeleft
+            });
+        }
+    }
+
+    private removeUntrackedBars(data: QueueDetails) {
         const currentIds = new Set(data.slots.map(item => item.nzo_id));
 
-        // Remove bars for completed/removed items
         for (const id of [...this.itemBars.keys()]) {
             if (!currentIds.has(id)) {
                 const bar = this.itemBars.get(id);
                 if (bar) this.multibar.remove(bar);
                 this.itemBars.delete(id);
-            }
-        }
-
-        // Add/update bars for each queue item
-        for (const item of data.slots) {
-            let itemTotalMb = parseFloat(item.mb);
-            let itemDownloadedMb = itemTotalMb - parseFloat(item.mbleft);
-            const itemUnit = itemTotalMb >= 1024 ? 'GB' : 'MB';
-            const itemScale = itemUnit === 'GB' ? 1024 : 1;
-            itemTotalMb /= itemScale;
-            itemDownloadedMb /= itemScale;
-
-            let bar = this.itemBars.get(item.nzo_id);
-            if (!bar) {
-                bar = this.multibar.create(itemTotalMb, itemDownloadedMb, {
-                    title: item.filename,
-                    status: item.status,
-                    timeleft: item.timeleft
-                }, {
-                    format: ' {bar} | {percentage}% | {title} | {status} | ETA: {timeleft} | {value}/{total} ' + itemUnit
-                });
-                this.itemBars.set(item.nzo_id, bar);
-            } else {
-                bar.update(itemDownloadedMb, {
-                    title: item.filename,
-                    status: item.status,
-                    timeleft: item.timeleft
-                });
             }
         }
     }
@@ -104,5 +117,12 @@ export class UIService {
                 }
             }
         }, ThemeHelper.mapStringToTheme(theme));
+    }
+
+    private static truncateName(name: string): string {
+        if (name.length > this.maxLength) {
+            return name.substring(0, this.maxLength) + '...';
+        }
+        return name;
     }
 }

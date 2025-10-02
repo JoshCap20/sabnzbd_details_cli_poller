@@ -7,7 +7,7 @@ const program = new Command();
 program
     .name('SABnzbd CLI Wrapper')
     .description('Simple SABnzbd API wrapper for the CLI')
-    .version('0.1.0');
+    .version('1.0.0');
 
 program.addCommand(createPollCommand());
 
