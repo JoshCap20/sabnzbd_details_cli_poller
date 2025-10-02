@@ -4,6 +4,9 @@ import { Configuration } from '../models/config.model';
 export function getConfig(): Configuration {
     const config = parseConfig();
     validateConfig(config);
+    if (config.api_configuration.is_ssl) {
+        console.warn('SSL Enabled: Connecting via SSL (make sure this is configured properly)')
+    }
     return config;
 }
 
@@ -11,7 +14,6 @@ function validateConfig(config: Configuration) {
     if (!config.api_configuration.host) throw new Error("SAB_HOST is required");
     if (!config.api_configuration.port) throw new Error("SAB_PORT is required and must be a number");
     if (!config.api_configuration.api_key) throw new Error("SAB_API_KEY is required");
-    if (config.api_configuration.is_ssl === undefined) throw new Error("SAB_SSL is required and must be 'true' or 'false'");
 
     if (!config.monitoring_configuration.poll_interval) throw new Error("SAB_POLL_INTERVAL is required and must be a number");
     if (!config.monitoring_configuration.retry_attempts) throw new Error("SAB_RETRY_ATTEMPTS is required and must be a number");
@@ -32,12 +34,12 @@ function parseConfig(): Configuration {
         monitoring_configuration: {
             poll_interval: parseInt(process.env.SAB_POLL_INTERVAL || ''),
             retry_attempts: parseInt(process.env.SAB_RETRY_ATTEMPTS || ''),
-            retry_delay: parseInt(process.env.SAB_RETRY_DELAY || '')
+            retry_delay: parseInt(process.env.SAB_RETRY_DELAY || ''),
+            queue_item_limit: parseInt(process.env.SAB_ITEM_LIMIT || '20')
         },
         ui_configuration: {
             ui_refresh_rate: parseInt(process.env.UI_REFRESH_RATE || ''),
             ui_theme: process.env.UI_THEME || '',
         },
-        queue_item_limit: parseInt(process.env.SAB_ITEM_LIMIT || '5')
     }
 }

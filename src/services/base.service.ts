@@ -16,24 +16,24 @@ export class BaseService {
         return url;
     }
 
-    protected getBaseUrl(): string {
-        return `${this.getProtocol()}://${this.configuration.api_configuration.host}:${this.configuration.api_configuration.port}/api?output=json&${this.getAPIKeyParam()}`;
-    }
-
-    protected getProtocol(): string {
-        return this.configuration.api_configuration.is_ssl
-            ? BaseService.https_protocol : BaseService.http_protocol;
-    }
-
-    protected getAPIKeyParam(): string {
-        return `apikey=${this.configuration.api_configuration.api_key}`;
-    }
-
     protected getPollInterval(): number {
         return this.configuration.monitoring_configuration.poll_interval;
     }
 
-    protected getQueueItemLimit(): number | undefined {
-        return this.configuration.queue_item_limit ?? undefined;
+    private getQueueItemLimit(): number {
+        return this.configuration.monitoring_configuration.queue_item_limit;
+    }
+
+    private getBaseUrl(): string {
+        return `${this.getProtocol()}://${this.configuration.api_configuration.host}:${this.configuration.api_configuration.port}/api?output=json&${this.getAPIKeyParam()}`;
+    }
+
+    private getProtocol(): string {
+        return this.configuration.api_configuration.is_ssl
+            ? BaseService.https_protocol : BaseService.http_protocol;
+    }
+
+    private getAPIKeyParam(): string {
+        return `apikey=${this.configuration.api_configuration.api_key}`;
     }
 }
