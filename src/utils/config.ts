@@ -7,10 +7,13 @@ export class ConfigHelper {
     public static getConfig(options: any): Configuration {
         const config = this.parseConfig(options);
         if (config.api_configuration.is_ssl) {
-            console.warn('SSL Enabled: Connecting via SSL (make sure this is configured properly)')
+            console.warn('SSL Enabled: Connecting via SSL (make sure this is configured properly)');
         }
         if (config.monitoring_configuration.queue_item_limit > 20) {
-            console.warn('20 is the max recommended queue item limit')
+            console.warn('20 is the max recommended queue item limit');
+        }
+        if (config.monitoring_configuration.poll_interval <= 100) {
+            console.warn('Poll/interval of 1000 ms at least is recommended, sub 100 may not ever show');
         }
         return config;
     }

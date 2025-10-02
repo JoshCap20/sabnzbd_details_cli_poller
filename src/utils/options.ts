@@ -10,27 +10,27 @@ export class OptionsHelper {
 
     private static createHostOptions(): Option[] {
         return [
-            new Option('-h, --host <host>', 'Set host address (e.g. 192.168.1.71)')
+            new Option('-h, --host <host>', Constants.DESC_HOST)
                 .env(Constants.ENV_SAB_HOST),
-            new Option('-p, --port <port>', 'Set port number (e.g. 8080)')
+            new Option('-p, --port <port>', Constants.DESC_PORT)
                 .default(Constants.DEFAULT_PORT)
                 .env(Constants.ENV_SAB_PORT)
                 .argParser(ConfigHelper.customIntParser),
-            new Option('--ssl', 'Uses HTTPS protocol for connection')
+            new Option('--ssl', Constants.DESC_SSL)
                 .default(Constants.DEFAULT_SSL),
-            new Option('--api-key <key>', 'Set API key (retrieved from sabnzbd')
+            new Option('--api-key <key>', Constants.DESC_API_KEY)
                 .env(Constants.ENV_SAB_API_KEY)
         ];
     }
 
     private static createAPIOptions(): Option[] {
         return [
-            new Option('-r, --retries <count>', 'Set retry attempts for API calls')
+            new Option('-r, --retries <count>', Constants.DESC_RETRY_ATTEMPTS)
                 .default(Constants.DEFAULT_RETRY_ATTEMPTS)
                 .env(Constants.ENV_SAB_RETRY_ATTEMPTS)
                 .argParser(ConfigHelper.customIntParser),
-            new Option('--retry-delay <delay>', 'Set delay on retry for API calls')
-                .default(Constants.DEFAULT_RETRY_DELAY, Constants.DESC_DEFAULT_RETRY_DELAY)
+            new Option('--retry-delay <delay>', Constants.DESC_RETRY_DELAY)
+                .default(Constants.DEFAULT_RETRY_DELAY)
                 .env(Constants.ENV_SAB_RETRY_DELAY)
                 .argParser(ConfigHelper.customIntParser)
         ]

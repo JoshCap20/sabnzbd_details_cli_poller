@@ -13,19 +13,19 @@ export function createPollCommand(): Command {
 
     return cmd
         .addOption(
-            new Option('-l, --limit <type>', 'Set queue item limit')
-                .default(Constants.DEFAULT_QUEUE_LIMIT, Constants.DESC_DEFAULT_QUEUE_LIMIT)
+            new Option('-l, --limit <type>', Constants.DESC_QUEUE_LIMIT)
+                .default(Constants.DEFAULT_QUEUE_LIMIT)
                 .env(Constants.ENV_SAB_ITEM_LIMIT)
                 .argParser(ConfigHelper.customIntParser)
         )
         .addOption(
-            new Option('-i, --interval <type>', 'Set the polling interval in milliseconds')
-                .default(Constants.DEFAULT_POLL_INTERVAL, Constants.DESC_DEFAULT_POLL_INTERVAL)
+            new Option('-i, --interval <type>', Constants.DESC_POLL_INTERVAL)
+                .default(Constants.DEFAULT_POLL_INTERVAL)
                 .env(Constants.ENV_SAB_POLL_INTERVAL)
                 .argParser(ConfigHelper.customIntParser)
         )
         .addOption(
-            new Option('-t, --theme <theme>')
+            new Option('-t, --theme <theme>', Constants.DESC_THEME)
                 .choices(ThemeHelper.getAvailableThemeStrings())
                 .default(ThemeHelper.defaultThemeString)
                 .env(Constants.ENV_UI_THEME)
