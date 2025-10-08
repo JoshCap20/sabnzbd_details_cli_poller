@@ -42,6 +42,10 @@ export function createPollCommand(): Command {
                 .default(20)
                 .argParser(customIntParser)
         )
+        .addOption(
+            new Option('--colored-status', 'Enable colored status indicators in the UI')
+                .default(true)
+        )
         .action((options) => {
             console.log(options);
             console.log('\n\n');

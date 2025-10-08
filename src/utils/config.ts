@@ -15,6 +15,7 @@ interface CommandOptions {
     theme: string;
     titleLength: number;
     barSize: number;
+    coloredStatus: boolean;
 }
 
 function parseConfig(options: CommandOptions): Configuration {
@@ -35,6 +36,7 @@ function parseConfig(options: CommandOptions): Configuration {
             theme: options.theme,
             title_length: options.titleLength,
             bar_size: options.barSize,
+            colored_status: options.coloredStatus
         },
     }
 }

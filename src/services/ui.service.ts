@@ -2,8 +2,9 @@ import { MultiBar, SingleBar } from 'cli-progress';
 
 import { QueueDetails } from '../models/queue-details.model';
 import { QueueItem } from '../models/queue-item.model';
-import { mapStringToTheme } from '../utils/theme';
 import { UIConfiguration } from '../models/config.model';
+import { mapStringToTheme } from '../utils/theme';
+import { colorizeStatus } from '../utils/color';
 
 export class UIService {
     private multibar: MultiBar;
@@ -65,6 +66,7 @@ export class UIService {
         let itemTotalMb = parseFloat(item.mb);
         let itemDownloadedMb = itemTotalMb - parseFloat(item.mbleft);
         const truncatedName = this.truncateName(item.filename);
+        const status = this.config.colored_status ? colorizeStatus(item.status) : item.status;
         const itemUnit = itemTotalMb >= 1024 ? 'GB' : 'MB';
         const itemScale = itemUnit === 'GB' ? 1024 : 1;
         itemTotalMb /= itemScale;
@@ -74,7 +76,7 @@ export class UIService {
         if (!bar) {
             bar = this.multibar.create(itemTotalMb, itemDownloadedMb, {
                 title: truncatedName,
-                status: item.status,
+                status: status,
                 timeleft: item.timeleft
             }, {
                 format: ' {bar} | {percentage}% | {title} | {status} | ETA: {timeleft} | {value}/{total} ' + itemUnit
@@ -83,7 +85,7 @@ export class UIService {
         } else {
             bar.update(itemDownloadedMb, {
                 title: truncatedName,
-                status: item.status,
+                status: status,
                 timeleft: item.timeleft
             });
         }

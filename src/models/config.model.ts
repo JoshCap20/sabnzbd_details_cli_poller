@@ -9,6 +9,7 @@ export interface UIConfiguration {
     theme: string
     title_length: number
     bar_size: number
+    colored_status: boolean
 }
 
 export interface MonitoringConfiguration {
