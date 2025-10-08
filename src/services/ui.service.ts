@@ -1,4 +1,4 @@
-import * as cliProgress from 'cli-progress';
+import { MultiBar, SingleBar } from 'cli-progress';
 
 import { QueueDetails } from '../models/queue-details.model';
 import { QueueItem } from '../models/queue-item.model';
@@ -6,16 +6,16 @@ import { mapStringToTheme } from '../utils/theme';
 import { UIConfiguration } from '../models/config.model';
 
 export class UIService {
-    private multibar: cliProgress.MultiBar;
-    private overallBar: cliProgress.SingleBar | null;
-    private itemBars: Map<string, cliProgress.SingleBar>;
+    private multibar: MultiBar;
+    private overallBar: SingleBar | null;
+    private itemBars: Map<string, SingleBar>;
     private config: UIConfiguration;
 
     constructor(config: UIConfiguration, pollInterval: number) {
         this.config = config;
         this.multibar = this.initializeMultibar(pollInterval);
         this.overallBar = null;
-        this.itemBars = new Map<string, cliProgress.SingleBar>;
+        this.itemBars = new Map<string, SingleBar>;
     }
 
     public stop() {
@@ -102,7 +102,7 @@ export class UIService {
     }
 
     private initializeMultibar(pollInterval: number) {
-        return new cliProgress.MultiBar({
+        return new MultiBar({
             fps: pollInterval,
             clearOnComplete: true,
             hideCursor: true,
