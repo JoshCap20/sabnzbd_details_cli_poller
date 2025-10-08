@@ -1,4 +1,5 @@
 import { Command, Option } from "commander";
+
 import { SABService } from "../services/sab.service";
 import { customIntParser, getConfig } from "../utils/config";
 import { defaultThemeString, getAvailableThemeStrings } from "../utils/theme";
@@ -13,13 +14,13 @@ export function createPollCommand(): Command {
 
     return cmd
         .addOption(
-            new Option('-l, --limit <type>', Constants.DESC_QUEUE_LIMIT)
+            new Option('-l, --limit <limit>', Constants.DESC_QUEUE_LIMIT)
                 .default(Constants.DEFAULT_QUEUE_LIMIT)
                 .env(Constants.ENV_SAB_ITEM_LIMIT)
                 .argParser(customIntParser)
         )
         .addOption(
-            new Option('-i, --interval <type>', Constants.DESC_POLL_INTERVAL)
+            new Option('-i, --interval <interval>', Constants.DESC_POLL_INTERVAL)
                 .default(Constants.DEFAULT_POLL_INTERVAL)
                 .env(Constants.ENV_SAB_POLL_INTERVAL)
                 .argParser(customIntParser)
@@ -29,6 +30,12 @@ export function createPollCommand(): Command {
                 .choices(getAvailableThemeStrings())
                 .default(defaultThemeString)
                 .env(Constants.ENV_UI_THEME)
+        )
+        .addOption(
+            new Option('--title-length <length>', Constants.DESC_MAX_TITLE_LENGTH)
+                .default(Constants.DEFAULT_MAX_TITLE_LENGTH)
+                .env(Constants.ENV_MAX_TITLE_LENGTH)
+                .argParser(customIntParser)
         )
         .action((options) => {
             console.log(options);

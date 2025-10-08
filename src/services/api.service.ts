@@ -1,8 +1,8 @@
-import { Observable } from "rxjs";
+import { Observable, catchError, from, interval, map, of, Subject, switchMap, takeUntil } from 'rxjs';
+import axios from 'axios';
+
 import { QueueDetails } from "../models/queue-details.model";
 import { BaseService } from "./base.service";
-import { catchError, from, interval, map, of, Subject, switchMap, takeUntil } from 'rxjs';
-import axios from 'axios';
 
 export class APIService extends BaseService {
     public pollDetails(stopPolling$: Subject<void>): Observable<{ queue: QueueDetails; } | null> {

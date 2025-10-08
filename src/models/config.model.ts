@@ -6,7 +6,8 @@ export interface APIConfiguration {
 }
 
 export interface UIConfiguration {
-    ui_theme: string
+    theme: string
+    max_title_length: number
 }
 
 export interface MonitoringConfiguration {

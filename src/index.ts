@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
+
 import { createPollCommand } from "./commands/poll.command";
 
 const program = new Command();

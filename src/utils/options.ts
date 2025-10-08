@@ -1,4 +1,5 @@
 import { Command, Option } from "commander";
+
 import { customIntParser } from "./config";
 import { Constants } from "./constants";
 
