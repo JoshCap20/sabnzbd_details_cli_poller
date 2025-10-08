@@ -106,8 +106,9 @@ export class UIService {
             fps: pollInterval,
             clearOnComplete: true,
             hideCursor: true,
+            barsize: this.config.bar_size,
             format: ' {bar} | {percentage}% | {title} | ETA: {eta_formatted} | {value}/{total} MB',  // Default format (overridable per bar)
-            formatValue: (v, options, type) => {
+            formatValue: (v, _options, type) => {
                 if (type === 'value' || type === 'total') {
                     return v.toFixed(2);
                 } else if (type === 'percentage') {
@@ -120,8 +121,8 @@ export class UIService {
     }
 
     private truncateName(name: string): string {
-        if (name.length > this.config.max_title_length) {
-            return name.substring(0, this.config.max_title_length) + '...';
+        if (name.length > this.config.title_length) {
+            return name.substring(0, this.config.title_length) + '...';
         }
         return name;
     }

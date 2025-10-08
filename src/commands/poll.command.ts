@@ -37,6 +37,11 @@ export function createPollCommand(): Command {
                 .env(Constants.ENV_MAX_TITLE_LENGTH)
                 .argParser(customIntParser)
         )
+        .addOption(
+            new Option('--bar-size <size>', 'Set the size of the progress bar')
+                .default(20)
+                .argParser(customIntParser)
+        )
         .action((options) => {
             console.log(options);
             console.log('\n\n');

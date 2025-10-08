@@ -14,6 +14,7 @@ interface CommandOptions {
     limit: number;
     theme: string;
     titleLength: number;
+    barSize: number;
 }
 
 function parseConfig(options: CommandOptions): Configuration {
@@ -32,7 +33,8 @@ function parseConfig(options: CommandOptions): Configuration {
         },
         ui_configuration: {
             theme: options.theme,
-            max_title_length: options.titleLength
+            title_length: options.titleLength,
+            bar_size: options.barSize,
         },
     }
 }
