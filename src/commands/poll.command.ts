@@ -37,6 +37,17 @@ export function createPollCommand(): Command {
                 .env(Constants.ENV_MAX_TITLE_LENGTH)
                 .argParser(customIntParser)
         )
+        .addOption(
+            new Option('--bar-size <size>', Constants.DESC_BAR_SIZE)
+                .default(Constants.DEFAULT_MAX_BAR_SIZE)
+                .env(Constants.ENV_MAX_BAR_SIZE)
+                .argParser(customIntParser)
+        )
+        .addOption(
+            new Option('--colored-status', Constants.DESC_COLORED_STATUS)
+                .default(Constants.DEFAULT_COLORED_STATUS)
+                .env(Constants.ENV_COLORED_STATUS)
+        )
         .action((options) => {
             console.log(options);
             console.log('\n\n');

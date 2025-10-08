@@ -17,23 +17,23 @@ export class BaseService {
     }
 
     protected getPollInterval(): number {
-        return this.configuration.monitoring_configuration.poll_interval;
+        return this.configuration.queuePollingConfig.pollingInterval;
     }
 
     private getQueueItemLimit(): number {
-        return this.configuration.monitoring_configuration.queue_item_limit;
+        return this.configuration.queuePollingConfig.queueItemLimit;
     }
 
     private getBaseUrl(): string {
-        return `${this.getProtocol()}://${this.configuration.api_configuration.host}:${this.configuration.api_configuration.port}/api?output=json&${this.getAPIKeyParam()}`;
+        return `${this.getProtocol()}://${this.configuration.apiConfig.host}:${this.configuration.apiConfig.port}/api?output=json&${this.getAPIKeyParam()}`;
     }
 
     private getProtocol(): string {
-        return this.configuration.api_configuration.is_ssl
+        return this.configuration.apiConfig.isSSL
             ? BaseService.https_protocol : BaseService.http_protocol;
     }
 
     private getAPIKeyParam(): string {
-        return `apikey=${this.configuration.api_configuration.api_key}`;
+        return `apikey=${this.configuration.apiConfig.apiKey}`;
     }
 }

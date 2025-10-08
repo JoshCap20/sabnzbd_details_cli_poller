@@ -14,38 +14,42 @@ interface CommandOptions {
     limit: number;
     theme: string;
     titleLength: number;
+    barSize: number;
+    coloredStatus: boolean;
 }
 
 function parseConfig(options: CommandOptions): Configuration {
     return {
-        api_configuration: {
+        apiConfig: {
             host: options.host,
             port: options.port,
-            api_key: options.apiKey,
-            is_ssl: options.ssl,
+            apiKey: options.apiKey,
+            isSSL: options.ssl,
         },
-        monitoring_configuration: {
-            poll_interval: options.interval,
-            retry_attempts: options.retries,
-            retry_delay: options.retryDelay,
-            queue_item_limit: options.limit,
+        queuePollingConfig: {
+            pollingInterval: options.interval,
+            retryAttempts: options.retries,
+            retryDelay: options.retryDelay,
+            queueItemLimit: options.limit,
         },
-        ui_configuration: {
+        uiConfig: {
             theme: options.theme,
-            max_title_length: options.titleLength
+            maxTitleLength: options.titleLength,
+            barSize: options.barSize,
+            isColoredStatus: options.coloredStatus
         },
     }
 }
 
 export function getConfig(options: CommandOptions): Configuration {
     const config = parseConfig(options);
-    if (config.api_configuration.is_ssl) {
+    if (config.apiConfig.isSSL) {
         console.warn('SSL Enabled: Connecting via SSL (make sure this is configured properly)');
     }
-    if (config.monitoring_configuration.queue_item_limit > 20) {
+    if (config.queuePollingConfig.queueItemLimit > 20) {
         console.warn('20 is the max recommended queue item limit');
     }
-    if (config.monitoring_configuration.poll_interval <= 100) {
+    if (config.queuePollingConfig.pollingInterval <= 100) {
         console.warn('Poll/interval of 1000 ms at least is recommended, sub 100 may not ever show');
     }
     return config;
