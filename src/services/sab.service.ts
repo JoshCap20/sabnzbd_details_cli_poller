@@ -12,7 +12,7 @@ export class SABService {
 
     constructor(private config: Configuration) {
         this.apiService = new APIService(this.config);
-        this.uiService = new UIService(this.config.ui_configuration, this.config.monitoring_configuration.poll_interval);
+        this.uiService = new UIService(this.config.uiConfig, this.config.queuePollingConfig.pollingInterval);
         this.stopPolling$ = new Subject<void>();
     }
 

@@ -66,7 +66,7 @@ export class UIService {
         let itemTotalMb = parseFloat(item.mb);
         let itemDownloadedMb = itemTotalMb - parseFloat(item.mbleft);
         const truncatedName = this.truncateName(item.filename);
-        const status = this.config.colored_status ? colorizeStatus(item.status) : item.status;
+        const status = this.config.isColoredStatus ? colorizeStatus(item.status) : item.status;
         const itemUnit = itemTotalMb >= 1024 ? 'GB' : 'MB';
         const itemScale = itemUnit === 'GB' ? 1024 : 1;
         itemTotalMb /= itemScale;
@@ -108,7 +108,7 @@ export class UIService {
             fps: pollInterval,
             clearOnComplete: true,
             hideCursor: true,
-            barsize: this.config.bar_size,
+            barsize: this.config.barSize,
             format: ' {bar} | {percentage}% | {title} | ETA: {eta_formatted} | {value}/{total} MB',  // Default format (overridable per bar)
             formatValue: (v, _options, type) => {
                 if (type === 'value' || type === 'total') {
@@ -123,8 +123,8 @@ export class UIService {
     }
 
     private truncateName(name: string): string {
-        if (name.length > this.config.title_length) {
-            return name.substring(0, this.config.title_length) + '...';
+        if (name.length > this.config.maxTitleLength) {
+            return name.substring(0, this.config.maxTitleLength) + '...';
         }
         return name;
     }

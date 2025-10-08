@@ -1,26 +1,26 @@
 export interface APIConfiguration {
     host: string
     port: number
-    api_key: string
-    is_ssl: boolean
+    apiKey: string
+    isSSL: boolean
 }
 
 export interface UIConfiguration {
     theme: string
-    title_length: number
-    bar_size: number
-    colored_status: boolean
+    maxTitleLength: number
+    barSize: number
+    isColoredStatus: boolean
 }
 
-export interface MonitoringConfiguration {
-    poll_interval: number
-    retry_attempts: number
-    retry_delay: number
-    queue_item_limit: number
+export interface QueuePollingConfiguration {
+    pollingInterval: number
+    retryAttempts: number
+    retryDelay: number
+    queueItemLimit: number
 }
 
 export interface Configuration {
-    api_configuration: APIConfiguration
-    monitoring_configuration: MonitoringConfiguration
-    ui_configuration: UIConfiguration
+    apiConfig: APIConfiguration
+    queuePollingConfig: QueuePollingConfiguration
+    uiConfig: UIConfiguration
 }
