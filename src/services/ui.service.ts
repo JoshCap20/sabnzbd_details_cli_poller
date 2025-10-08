@@ -1,8 +1,9 @@
-import { QueueDetails } from '../models/queue-details.model';
-
 import * as cliProgress from 'cli-progress';
+
+import { QueueDetails } from '../models/queue-details.model';
 import { QueueItem } from '../models/queue-item.model';
 import { mapStringToTheme } from '../utils/theme';
+import { UIConfiguration } from '../models/config.model';
 
 export class UIService {
     private multibar: cliProgress.MultiBar;

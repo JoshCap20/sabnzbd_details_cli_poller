@@ -1,4 +1,5 @@
 import { Command, Option } from "commander";
+
 import { SABService } from "../services/sab.service";
 import { customIntParser, getConfig } from "../utils/config";
 import { defaultThemeString, getAvailableThemeStrings } from "../utils/theme";
