@@ -13,6 +13,7 @@ interface CommandOptions {
     retryDelay: number;
     limit: number;
     theme: string;
+    titleLength: number;
 }
 
 function parseConfig(options: CommandOptions): Configuration {
@@ -30,7 +31,8 @@ function parseConfig(options: CommandOptions): Configuration {
             queue_item_limit: options.limit,
         },
         ui_configuration: {
-            theme: options.theme
+            theme: options.theme,
+            max_title_length: options.titleLength
         },
     }
 }

@@ -9,12 +9,11 @@ export class UIService {
     private multibar: cliProgress.MultiBar;
     private overallBar: cliProgress.SingleBar | null;
     private itemBars: Map<string, cliProgress.SingleBar>;
+    private config: UIConfiguration;
 
-    // TODO: Make configurable as part of ui config
-    private static maxLength = 50;
-
-    constructor(config: UIConfiguration) {
-        this.multibar = UIService.getMultibar(5, config.theme);
+    constructor(config: UIConfiguration, pollInterval: number) {
+        this.config = config;
+        this.multibar = this.initializeMultibar(pollInterval);
         this.overallBar = null;
         this.itemBars = new Map<string, cliProgress.SingleBar>;
     }
@@ -65,7 +64,7 @@ export class UIService {
     private updateItemBar(item: QueueItem) {
         let itemTotalMb = parseFloat(item.mb);
         let itemDownloadedMb = itemTotalMb - parseFloat(item.mbleft);
-        const truncatedName = UIService.truncateName(item.filename);
+        const truncatedName = this.truncateName(item.filename);
         const itemUnit = itemTotalMb >= 1024 ? 'GB' : 'MB';
         const itemScale = itemUnit === 'GB' ? 1024 : 1;
         itemTotalMb /= itemScale;
@@ -102,9 +101,9 @@ export class UIService {
         }
     }
 
-    private static getMultibar(poll_interval: number, theme: string) {
+    private initializeMultibar(pollInterval: number) {
         return new cliProgress.MultiBar({
-            fps: poll_interval,
+            fps: pollInterval,
             clearOnComplete: true,
             hideCursor: true,
             format: ' {bar} | {percentage}% | {title} | ETA: {eta_formatted} | {value}/{total} MB',  // Default format (overridable per bar)
@@ -117,12 +116,12 @@ export class UIService {
                     return v.toString();
                 }
             }
-        }, mapStringToTheme(theme));
+        }, mapStringToTheme(this.config.theme));
     }
 
-    private static truncateName(name: string): string {
-        if (name.length > this.maxLength) {
-            return name.substring(0, this.maxLength) + '...';
+    private truncateName(name: string): string {
+        if (name.length > this.config.max_title_length) {
+            return name.substring(0, this.config.max_title_length) + '...';
         }
         return name;
     }
