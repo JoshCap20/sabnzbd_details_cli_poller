@@ -6,8 +6,11 @@ export const Constants = {
     ENV_SAB_POLL_INTERVAL: 'SAB_POLL_INTERVAL',
     ENV_SAB_RETRY_ATTEMPTS: 'SAB_RETRY_ATTEMPTS',
     ENV_SAB_RETRY_DELAY: 'SAB_RETRY_DELAY',
+
     ENV_UI_THEME: 'THEME',
     ENV_MAX_TITLE_LENGTH: 'MAX_TITLE_LENGTH',
+    ENV_MAX_BAR_SIZE: 'BAR_SIZE',
+    ENV_COLORED_STATUS: 'COLORED_STATUS',
 
     DEFAULT_PORT: 8080,
     DEFAULT_SSL: false,
@@ -15,7 +18,9 @@ export const Constants = {
     DEFAULT_POLL_INTERVAL: 2000,
     DEFAULT_RETRY_ATTEMPTS: 3,
     DEFAULT_RETRY_DELAY: 2000,
-    DEFAULT_MAX_TITLE_LENGTH: 30,
+    DEFAULT_MAX_TITLE_LENGTH: 50,
+    DEFAULT_MAX_BAR_SIZE: 20,
+    DEFAULT_COLORED_STATUS: true,
 
     DESC_HOST: 'Set host address (e.g. 192.168.1.71)',
     DESC_PORT: 'Set port number (e.g. 8080)',
@@ -27,4 +32,6 @@ export const Constants = {
     DESC_RETRY_DELAY: 'Set delay on retry for API calls',
     DESC_THEME: 'Set UI theme',
     DESC_MAX_TITLE_LENGTH: 'Set maximum title length for queue items',
+    DESC_BAR_SIZE: 'Set the size of the progress bar',
+    DESC_COLORED_STATUS: 'Enable colored status indicators in the UI',
 } as const;

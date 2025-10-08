@@ -38,13 +38,15 @@ export function createPollCommand(): Command {
                 .argParser(customIntParser)
         )
         .addOption(
-            new Option('--bar-size <size>', 'Set the size of the progress bar')
-                .default(20)
+            new Option('--bar-size <size>', Constants.DESC_BAR_SIZE)
+                .default(Constants.DEFAULT_MAX_BAR_SIZE)
+                .env(Constants.ENV_MAX_BAR_SIZE)
                 .argParser(customIntParser)
         )
         .addOption(
-            new Option('--colored-status', 'Enable colored status indicators in the UI')
-                .default(true)
+            new Option('--colored-status', Constants.DESC_COLORED_STATUS)
+                .default(Constants.DEFAULT_COLORED_STATUS)
+                .env(Constants.ENV_COLORED_STATUS)
         )
         .action((options) => {
             console.log(options);
