@@ -30,7 +30,7 @@ function parseConfig(options: CommandOptions): Configuration {
             queue_item_limit: options.limit,
         },
         ui_configuration: {
-            ui_theme: options.theme
+            theme: options.theme
         },
     }
 }

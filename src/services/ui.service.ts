@@ -13,8 +13,8 @@ export class UIService {
     // TODO: Make configurable as part of ui config
     private static maxLength = 50;
 
-    constructor(theme: string) {
-        this.multibar = UIService.getMultibar(5, theme);
+    constructor(config: UIConfiguration) {
+        this.multibar = UIService.getMultibar(5, config.theme);
         this.overallBar = null;
         this.itemBars = new Map<string, cliProgress.SingleBar>;
     }

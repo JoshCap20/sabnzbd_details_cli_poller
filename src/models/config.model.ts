@@ -6,7 +6,7 @@ export interface APIConfiguration {
 }
 
 export interface UIConfiguration {
-    ui_theme: string
+    theme: string
 }
 
 export interface MonitoringConfiguration {
